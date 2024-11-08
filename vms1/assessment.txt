@@ -1,0 +1,143 @@
+@@ -1,76 +1,83 @@
+# Vehicle-Management-System
+
+A tracking program for company vehicles.
+It keeps track of records of company's vehicle usage by employees: 
+who, when, for what purpose, for how long run the particular car.
+
+## Project Assignment
+
+> Design a Vehicle Management System – tracking program for company vehicles.
+
+ 
+> Specifications 
+
+> *	A tracking program for company vehicles. 
+> *	Identifying how and when vehicles are checked out for usage by employees. 
+> *	Cargo transportation, business trip, loaner cars, … _
+> * Record ID number, date checked out, driver name, mileage, type of usage, and contents. 
+> * Company use: each trip is recorded including date, time, miles driven, fuel cost, and the purpose of the trip. 
+> * Personal use: the insurance information should be recorded. 
+> * Carrying passengers: list of passengers; 
+> * Carrying cargo, an inventory of the vehicle contents 
+
+doc/VMS-Process.png
+doc/VMS-screen-shots/VMS-01-Main-page.png
+doc/VMS-screen-shots/VMS-02-Users.png
+doc/VMS-screen-shots/VMS-03-User-info.png
+doc/VMS-screen-shots/VMS-04-Vehicles.png
+doc/VMS-screen-shots/VMS-05-Vehicle-info.png
+doc/VMS-screen-shots/VMS-06-Requests.png
+doc/VMS-screen-shots/VMS-07-Request-info.png
+doc/VMS-screen-shots/VMS-08-Trips.png
+doc/VMS-screen-shots/VMS-09-Trip-info.png
+
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Vehicles.iml" filepath="$PROJECT_DIR$/Vehicles.iml" />
+    </modules>
+  </component>
+</project>
+
+// Vehicle.cpp
+Vehicle::Vehicle(int id, const std::string& brand, int year)
+    : id(id), brand(brand), year(year) {}
+
+void Vehicle::displayInfo() const {
+    std::cout << "ID: " << id << "\nBrand: " << brand << "\nYear: " << year << "\n";
+}
+
+int Vehicle::getId() const {
+    return id;
+}
+
+void Vehicle::updateInfo(const std::string& brand, int year) {
+    this->brand = brand;
+    this->year = year;
+}
+
+// Car.cpp
+Car::Car(int id, const std::string& brand, int year, int numDoors)
+    : Vehicle(id, brand, year), numDoors(numDoors) {}
+
+void Car::displayInfo() const {
+    Vehicle::displayInfo();
+    std::cout << "Number of doors: " << numDoors << "\n";
+}
+
+void Car::updateInfo(const std::string& brand, int year, int numDoors) {
+    Vehicle::updateInfo(brand, year);
+    this->numDoors = numDoors;
+}
+
+// Motorcycle.cpp
+Motorcycle::Motorcycle(int id, const std::string& brand, int year, bool hasSidecar)
+    : Vehicle(id, brand, year), hasSidecar(hasSidecar) {}
+
+void Motorcycle::displayInfo() const {
+    Vehicle::displayInfo();
+    std::cout << "Has sidecar: " << (hasSidecar? "Yes" : "No") << "\n";
+}
+
+void Motorcycle::updateInfo(const std::string& brand, int year, bool hasSidecar) {
+    Vehicle::updateInfo(brand, year);
+    this->hasSidecar = hasSidecar;
+}
+
+// Truck.cpp
+Truck::Truck(int id, const std::string& brand, int year, double loadCapacity)
+    : Vehicle(id, brand, year), loadCapacity(loadCapacity) {}
+
+void Truck::displayInfo() const {
+    Vehicle::displayInfo();
+    std::cout << "Load capacity: " << loadCapacity << " tons\n";
+}
+
+void Truck::updateInfo(const std::string& brand, int year, double loadCapacity) {
+    Vehicle::updateInfo(brand, year);
+    this->loadCapacity = loadCapacity;
+}
+
+// VehicleManagementSystem.cpp
+void VehicleManagementSystem::addVehicle(std::unique_ptr<Vehicle> vehicle) {
+    vehicles.push_back(std::move(vehicle));
+}
+
+void VehicleManagementSystem::removeVehicle(int id) {
+    vehicles.erase(std::remove_if(vehicles.begin(), vehicles.end(),
+                                  [id](const auto& vehicle) { return vehicle->getId() == id; }),
+                   vehicles.end());
+}
+
+void VehicleManagementSystem::displayVehicles() const {
+    for (const auto& vehicle : vehicles) {
+        vehicle->displayInfo();
+        std::cout << "\n";
+    }
+}
+
+void VehicleManagementSystem::searchVehicle(int id) const {
+    for (const auto& vehicle : vehicles) {
+        if (vehicle->getId() == id) {
+            vehicle->displayInfo();
+            return;
+        }
+    }
+    std::cout << "Vehicle not found.\n";
+}
+
+void VehicleManagementSystem::updateVehicle(int id, const std::string& brand, int year) {
+    for (auto& vehicle : vehicles) {
+        if (vehicle->getId() == id) {
+            vehicle->updateInfo(brand, year);
+            return;
+        }
+    }
+    std::cout << "Vehicle not found.\n";
+}
+
+int VehicleManagementSystem::generateNextId() {
+    return nextId++;
+}
