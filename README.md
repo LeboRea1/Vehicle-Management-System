@@ -82,7 +82,7 @@ Classes | Enumerations
 
 ## Author
 
-* [Maria Romanova](https://github.com/aemulare)
+* [Lebogang Lethlahe](https://github.com/aemulare)
 
 ## Links
 
